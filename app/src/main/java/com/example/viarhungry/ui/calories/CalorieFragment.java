@@ -26,7 +26,7 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
     private MainActivity mainActivity;
     private TextView foodName;
     private TextView calories;
-
+    private TextView calorie_total;
     public ArrayList<food> foods;
 
 
@@ -72,24 +72,27 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
 
         foodName = (TextView) view.findViewById(R.id.foodName);
         calories = (TextView) view.findViewById(R.id.caloriesNumber);
+        calorie_total = (TextView) view.findViewById(R.id.totalCalories);
 
 
     }
 
     public void onPause() {
         mainActivity.setFoods(foods);
+        updateCalorieTotal();
         super.onPause();
     }
 
     public void onResume() {
         foods = mainActivity.getFoods();
-
+        updateCalorieTotal();
         super.onResume();
     }
 
 
     @Override
     public void onClick(View v) {
+
         switch (v.getId()) {
 
             case R.id.addFood: {
@@ -107,17 +110,9 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
 
     private void removeFood() {
         Log.e("REMOVE FOOD","" + foods.size());
-        if(foods.size()>0){
-            Log.e("REMOVE FOOD","" + foods.size());
-            Log.e("DEBUG","size: "+ foods.size());
-            for(int i =0;i<foods.size();i++) {
-                Log.e("DEBUG", "Item"+i+" :" + foods.get(i).name);
-            }
-
-            removeLastFood();
-
+        removeLastFood();
             //removes the top item from the list
-        }
+        updateCalorieTotal();
     }
 
     private void addFood() {
@@ -125,6 +120,16 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
         //String cal =calories.getText().toString();
         food newFood = new food("wumpus","999");
         addFood(newFood);
+        updateCalorieTotal();
+    }
+
+    public void updateCalorieTotal(){
+        int tmpC=0;
+        for(int i=0;i<foods.size();i++)
+            tmpC+= Integer.parseInt(foods.get(i).calories);
+
+        calorie_total.setText(""+tmpC);
+
     }
 
 
@@ -203,6 +208,8 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
             foodAdapter.notifyItemRangeChanged(foods.size(),foods.size());
 
         }
+
+
 
     }
 }
