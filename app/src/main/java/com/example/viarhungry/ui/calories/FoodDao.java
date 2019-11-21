@@ -1,55 +1,31 @@
 package com.example.viarhungry.ui.calories;
 
-import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
+import androidx.room.Delete;
+import androidx.room.Insert;
+import androidx.room.Query;
+import androidx.room.Update;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class FoodDao {
-    private ArrayList<Food> allFood;
-    private static FoodDao instance;
+@Dao
+public interface FoodDao {
 
-    private FoodDao(){
-        allFood = new ArrayList<>();
-    }
+    @Insert
+    void insert(Food food);
 
-    public static FoodDao getInstance(){
-        if(instance == null){
-            instance = new FoodDao();
-        }
+    @Update
+    void update(Food food);
 
-        return instance;
-    }
+    @Delete
+    void delete(Food food);
 
-    public ArrayList<Food> getAllFood(){
-        return allFood;
-    }
+    @Query("DELETE FROM food_table")
+    void deleteAllNotes();
 
-    public void insert (Food Food){
+    @Query("SELECT * FROM food_table ORDER BY date DESC")
+    List<Food> list();
 
-        allFood.add(Food);
-    }
-
-    public void deleteAllFood(){
-        allFood = new ArrayList<>();
-    }
-
-    public void removeTop(){
-
-       allFood.remove(allFood.size()-1);
-    }
-
-    Food get(int index){
-
-       return allFood.get(index);
-    }
-
-    int size() {
-        return allFood.size();
-    }
-
-    void set(ArrayList<Food> foods) {
-        allFood = foods;
-    }
 }
-
-

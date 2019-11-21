@@ -109,9 +109,7 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
         String tempFName=foodName.getText().toString();
         String tempCalories=calories.getText().toString();
 
-        if(tempFName.equals("")) {
-            tempFName = "Food";
-        }
+        if(tempFName.equals("")) tempFName = "Food";
 
 
         if(!tempCalories.equals("")) {

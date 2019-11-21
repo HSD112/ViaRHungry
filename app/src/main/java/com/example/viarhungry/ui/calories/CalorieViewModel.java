@@ -1,18 +1,21 @@
 package com.example.viarhungry.ui.calories;
 
-import androidx.lifecycle.ViewModel;
+import android.app.Application;
+
+import androidx.lifecycle.AndroidViewModel;
 
 import java.util.ArrayList;
 
 
-public class CalorieViewModel extends ViewModel {
+public class CalorieViewModel extends AndroidViewModel {
 
     private CalorieRepository repository;
     private String calorie_total;
 
 
-    public CalorieViewModel() {
-        repository = CalorieRepository.getInstance();
+    public CalorieViewModel(Application app) {
+        super(app);
+        repository = CalorieRepository.getInstance(app);
         calorie_total="0";
 
     }
