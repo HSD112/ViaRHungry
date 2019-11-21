@@ -29,7 +29,6 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
     private EditText foodName;
     private EditText calories;
     private TextView calorie_total;
-    public ArrayList<food> foods;
 
 
 
@@ -50,18 +49,9 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
-        // Setup any handles to view objects here
-        // EditText etFoo = (EditText) view.findViewById(R.id.etFoo);
-
         foodList = view.findViewById(R.id.rv);
         foodList.hasFixedSize();
         foodList.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-//        newFoods.add(new food("Sandwich1","100"));
-//
-//        newFoods.add(new food("Sandwich2","100"));
-//
-//        newFoods.add(new food("Sandwich3","100"));
 
         foodAdapter = new myAdaptor(new ArrayList<food>());
         foodList.setAdapter(foodAdapter);
@@ -80,13 +70,13 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
     }
 
     public void onPause() {
-        mainActivity.setFoods(foods);
+        mainActivity.setFoods(dashboardViewModel.getFoods());
         updateCalorieTotal();
         super.onPause();
     }
 
     public void onResume() {
-        foods = mainActivity.getFoods();
+        dashboardViewModel.setFoods(mainActivity.getFoods());
         updateCalorieTotal();
         super.onResume();
     }
@@ -111,17 +101,23 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
     }
 
     private void removeFood() {
-        Log.e("REMOVE FOOD","" + foods.size());
         removeLastFood();
-            //removes the top item from the list
         updateCalorieTotal();
     }
 
     private void addFood() {
-        if(!foodName.getText().toString().equals("") && !calories.getText().equals("")) {
-            String fn = foodName.getText().toString();
-            String cal = calories.getText().toString();
-            food newFood = new food(fn, cal);
+        String tempFName=foodName.getText().toString();
+        String tempCalories=calories.getText().toString();
+
+        if(tempFName.equals("")) {
+            tempFName = "Food";
+        }
+
+
+        if(!tempCalories.equals("")) {
+
+            food newFood = new food(tempFName, tempCalories);
+
             addFood(newFood);
             updateCalorieTotal();
         }
@@ -138,19 +134,14 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
     }
 
     public void updateCalorieTotal(){
-        int tmpC=0;
-        for(int i=0;i<foods.size();i++)
-            tmpC+= Integer.parseInt(foods.get(i).calories);
-
-        calorie_total.setText(""+tmpC);
-
+        calorie_total.setText(dashboardViewModel.updateCalorieTotal());
     }
 
 
     private class myAdaptor extends RecyclerView.Adapter {
 
         public myAdaptor(ArrayList<food> newFoods){
-            foods=newFoods;
+            dashboardViewModel.setFoods(newFoods);
         }
 
         @NonNull
@@ -166,13 +157,13 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            ViewHolder.foodName.setText(foods.get(position).getName());
-            ViewHolder.calorieCount.setText(foods.get(position).getCalories());
+            ViewHolder.foodName.setText(dashboardViewModel.getFood(position).getName());
+            ViewHolder.calorieCount.setText(dashboardViewModel.getFood(position).getCalories());
         }
 
         @Override
         public int getItemCount() {
-            return foods.size();
+            return dashboardViewModel.getFoods().size();
         }
 
 
@@ -193,33 +184,17 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    public class food{
-        private String name;
-        private String calories;
-
-        food(String name,String cal){
-            this.name   =name;
-            calories    =cal;
-        }
-
-        public String getName(){
-            return name;
-        }
-        public String getCalories(){
-            return calories;
-        }
-    }
 
     public void addFood(food Food){
-        foods.add(Food);
-        foodAdapter.notifyItemInserted(foods.size()-1);
+        dashboardViewModel.addFood(Food);
+        foodAdapter.notifyItemInserted(dashboardViewModel.getFoods().size()-1);
     }
 
     public void removeLastFood(){
-        if(foods.size()>0) {
-            foods.remove(foods.size() - 1);
-            foodAdapter.notifyItemRemoved(foods.size());
-            foodAdapter.notifyItemRangeChanged(foods.size(),foods.size());
+        if(dashboardViewModel.getFoods().size()>0) {
+            dashboardViewModel.removeLastFood();
+            foodAdapter.notifyItemRemoved(dashboardViewModel.getFoods().size());
+            foodAdapter.notifyItemRangeChanged(dashboardViewModel.getFoods().size(),dashboardViewModel.getFoods().size());
 
         }
 

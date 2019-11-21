@@ -15,6 +15,7 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Display1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/totalCalories"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
@@ -54,8 +55,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="168dp"
+        android:layout_height="238dp"
+        android:layout_marginBottom="169dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
@@ -74,10 +75,10 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/foodName"
-            android:maxLength="15"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/food_name" />
+            android:hint="@string/food_name"
+            android:maxLength="15" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -91,11 +92,11 @@
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/caloriesNumber"
-            android:maxLength="4"
-            android:inputType="number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/calories" />
+            android:hint="@string/calories"
+            android:inputType="number"
+            android:maxLength="4" />
     </com.google.android.material.textfield.TextInputLayout>
 
 

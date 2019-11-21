@@ -11,8 +11,9 @@
         android:contentDescription="@string/cupimage"
         app:layout_constraintBottom_toTopOf="@+id/cupsDrunk"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@mipmap/water" />
 
     <Button
@@ -48,7 +49,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.626" />
 
     <TextView
         android:id="@+id/textOfWater"
@@ -57,9 +59,10 @@
         android:text="@string/cups_250ml_of_water"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cupsDrunk"
-        app:layout_constraintVertical_bias="0.114" />
+        app:layout_constraintVertical_bias="0.568" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -68,11 +71,11 @@
         android:layout_height="37dp"
         android:indeterminate="false"
         android:max="8"
-        app:layout_constraintBottom_toTopOf="@+id/imageView"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.488"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.802" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

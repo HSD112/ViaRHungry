@@ -23,13 +23,7 @@ public class HistoryFragment extends Fragment {
         notificationsViewModel =
                 ViewModelProviders.of(this).get(HistoryViewModel.class);
         View root = inflater.inflate(R.layout.fragment_history, container, false);
-        final TextView textView = root.findViewById(R.id.text_notifications);
-        notificationsViewModel.getText().observe(this, new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
+
         return root;
     }
 }

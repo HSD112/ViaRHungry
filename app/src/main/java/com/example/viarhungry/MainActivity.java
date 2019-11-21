@@ -1,5 +1,6 @@
 package com.example.viarhungry;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,6 +10,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.viarhungry.ui.calories.CalorieFragment;
+import com.example.viarhungry.ui.calories.food;
 import com.example.viarhungry.ui.water.WaterFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -18,13 +20,12 @@ public class MainActivity extends AppCompatActivity {
 
     private String cupsDrunk;
     private int bar;
-    private ArrayList<CalorieFragment.food> foods;
+    private ArrayList<food> foods;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         cupsDrunk = "0";
-        bar = 0;
         foods = new ArrayList<>();
 
         super.onCreate(savedInstanceState);
@@ -43,6 +44,24 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SharedPreferences prefs = getSharedPreferences("DailyData", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("cupsDrunk", cupsDrunk);
+        editor.apply();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences prefs = getSharedPreferences("DailyData", MODE_PRIVATE);
+        cupsDrunk= prefs.getString("cupsDrunk", "0");
+    }
+
+
+
     public String getCupsDrunk() {
         return cupsDrunk;
     }
@@ -59,10 +78,17 @@ public class MainActivity extends AppCompatActivity {
         bar = value;
     }
 
-    public void setFoods(ArrayList<CalorieFragment.food> foods){
+    public void setFoods(ArrayList<food> foods){
         this.foods=foods;
     }
-    public ArrayList<CalorieFragment.food> getFoods(){
+    public ArrayList<food> getFoods(){
         return foods;
+    }
+    public void saveLocalData(){
+
+
+    }
+    public void loadLocalData(){
+
     }
 }
