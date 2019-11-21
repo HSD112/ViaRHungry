@@ -6,14 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import androidx.annotation.LayoutRes;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.viarhungry.MainActivity;
 import com.example.viarhungry.R;
 
-import java.text.CollationElementIterator;
 import java.util.ArrayList;
 
 public class CalorieFragment extends Fragment implements View.OnClickListener {
@@ -31,7 +26,9 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
     private MainActivity mainActivity;
     private TextView foodName;
     private TextView calories;
-    public ArrayList<food> newFoods = new ArrayList<>();
+
+    public ArrayList<food> foods;
+
 
 
 
@@ -58,12 +55,13 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
         foodList.hasFixedSize();
         foodList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+//        newFoods.add(new food("Sandwich1","100"));
+//
+//        newFoods.add(new food("Sandwich2","100"));
+//
+//        newFoods.add(new food("Sandwich3","100"));
 
-        Log.e("onViewCreated",""+ newFoods.size());
-
-
-
-        foodAdapter = new foodAdapterMethod(newFoods);
+        foodAdapter = new myAdaptor(new ArrayList<food>());
         foodList.setAdapter(foodAdapter);
 
         Button addDrinkButton = (Button) view.findViewById(R.id.addFood);
@@ -79,12 +77,12 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
     }
 
     public void onPause() {
-        mainActivity.setFoods(newFoods);
+        mainActivity.setFoods(foods);
         super.onPause();
     }
 
     public void onResume() {
-        newFoods = mainActivity.getFoods();
+        foods = mainActivity.getFoods();
 
         super.onResume();
     }
@@ -108,13 +106,16 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
     }
 
     private void removeFood() {
-        Log.e("REMOVE FOOD","" + newFoods.size());
-        if(newFoods.size()>0){
-            Log.e("REMOVE FOOD","" + newFoods.size());
-            newFoods.remove(newFoods.size()-1);
-            foodList.removeViewAt(newFoods.size()); // list already went down by one so removed "-1"
-            foodAdapter.notifyItemRemoved(newFoods.size());
-            foodAdapter.notifyItemRangeChanged(newFoods.size(),newFoods.size());
+        Log.e("REMOVE FOOD","" + foods.size());
+        if(foods.size()>0){
+            Log.e("REMOVE FOOD","" + foods.size());
+            Log.e("DEBUG","size: "+ foods.size());
+            for(int i =0;i<foods.size();i++) {
+                Log.e("DEBUG", "Item"+i+" :" + foods.get(i).name);
+            }
+
+            removeLastFood();
+
             //removes the top item from the list
         }
     }
@@ -122,18 +123,15 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
     private void addFood() {
         //String fn = foodName.getText().toString();
         //String cal =calories.getText().toString();
-
-        newFoods.add(new food("name", "100"));
-        foodAdapter.notifyItemRangeChanged(newFoods.size(),newFoods.size());
+        food newFood = new food("wumpus","999");
+        addFood(newFood);
     }
 
 
-    private class foodAdapterMethod extends RecyclerView.Adapter {
+    private class myAdaptor extends RecyclerView.Adapter {
 
-        private ArrayList<food> foods;
-
-        public foodAdapterMethod(ArrayList<food> foods){
-            this.foods=foods;
+        public myAdaptor(ArrayList<food> newFoods){
+            foods=newFoods;
         }
 
         @NonNull
@@ -157,6 +155,9 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
         public int getItemCount() {
             return foods.size();
         }
+
+
+
 
 
     }
@@ -188,5 +189,20 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
         public String getCalories(){
             return calories;
         }
+    }
+
+    public void addFood(food Food){
+        foods.add(Food);
+        foodAdapter.notifyItemInserted(foods.size()-1);
+    }
+
+    public void removeLastFood(){
+        if(foods.size()>0) {
+            foods.remove(foods.size() - 1);
+            foodAdapter.notifyItemRemoved(foods.size());
+            foodAdapter.notifyItemRangeChanged(foods.size(),foods.size());
+
+        }
+
     }
 }
