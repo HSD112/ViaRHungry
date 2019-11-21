@@ -1,5 +1,7 @@
 package com.example.viarhungry.ui.calories;
 
+import androidx.lifecycle.MutableLiveData;
+
 import java.util.ArrayList;
 
 public class FoodDao {
@@ -7,7 +9,7 @@ public class FoodDao {
     private static FoodDao instance;
 
     private FoodDao(){
-        allFood = new ArrayList<Food>();
+        allFood = new ArrayList<>();
     }
 
     public static FoodDao getInstance(){
