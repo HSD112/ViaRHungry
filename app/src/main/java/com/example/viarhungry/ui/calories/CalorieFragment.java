@@ -6,7 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -24,8 +26,8 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
     private RecyclerView foodList;
     private RecyclerView.Adapter foodAdapter;
     private MainActivity mainActivity;
-    private TextView foodName;
-    private TextView calories;
+    private EditText foodName;
+    private EditText calories;
     private TextView calorie_total;
     public ArrayList<food> foods;
 
@@ -70,8 +72,8 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
         Button removeDrinkButton = (Button) view.findViewById(R.id.removeFood);
         removeDrinkButton.setOnClickListener(this);
 
-        foodName = (TextView) view.findViewById(R.id.foodName);
-        calories = (TextView) view.findViewById(R.id.caloriesNumber);
+        foodName = (EditText) view.findViewById(R.id.foodName);
+        calories = (EditText) view.findViewById(R.id.caloriesNumber);
         calorie_total = (TextView) view.findViewById(R.id.totalCalories);
 
 
@@ -116,11 +118,23 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
     }
 
     private void addFood() {
-        //String fn = foodName.getText().toString();
-        //String cal =calories.getText().toString();
-        food newFood = new food("wumpus","999");
-        addFood(newFood);
-        updateCalorieTotal();
+        if(!foodName.getText().toString().equals("") && !calories.getText().equals("")) {
+            String fn = foodName.getText().toString();
+            String cal = calories.getText().toString();
+            food newFood = new food(fn, cal);
+            addFood(newFood);
+            updateCalorieTotal();
+        }
+        else foodToast();
+    }
+
+    private void foodToast() {
+
+        String text = "Ya can't eat air, dummy";
+
+        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
+
+
     }
 
     public void updateCalorieTotal(){

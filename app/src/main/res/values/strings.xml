@@ -12,4 +12,5 @@
     <string name="add">Add</string>
     <string name="remove_last">Remove last</string>
     <string name="_0">0</string>
+    <string name="caloriesTotalPartner">Calories:</string>
 </resources>
