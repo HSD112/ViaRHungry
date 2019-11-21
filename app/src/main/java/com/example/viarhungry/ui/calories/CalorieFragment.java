@@ -1,7 +1,6 @@
 package com.example.viarhungry.ui.calories;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +39,7 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
                              ViewGroup container, Bundle savedInstanceState) {
         dashboardViewModel =
                 ViewModelProviders.of(this).get(CalorieViewModel.class);
+
         View root = inflater.inflate(R.layout.fragment_calories, container, false);
         mainActivity = (MainActivity) getActivity();
         return root;
@@ -53,7 +53,7 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
         foodList.hasFixedSize();
         foodList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        foodAdapter = new myAdaptor(new ArrayList<food>());
+        foodAdapter = new myAdaptor(new ArrayList<Food>());
         foodList.setAdapter(foodAdapter);
 
         Button addDrinkButton = (Button) view.findViewById(R.id.addFood);
@@ -116,7 +116,7 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
 
         if(!tempCalories.equals("")) {
 
-            food newFood = new food(tempFName, tempCalories);
+            Food newFood = new Food(tempFName, tempCalories);
 
             addFood(newFood);
             updateCalorieTotal();
@@ -140,7 +140,7 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
 
     private class myAdaptor extends RecyclerView.Adapter {
 
-        public myAdaptor(ArrayList<food> newFoods){
+        public myAdaptor(ArrayList<Food> newFoods){
             dashboardViewModel.setFoods(newFoods);
         }
 
@@ -185,7 +185,7 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    public void addFood(food Food){
+    public void addFood(Food Food){
         dashboardViewModel.addFood(Food);
         foodAdapter.notifyItemInserted(dashboardViewModel.getFoods().size()-1);
     }

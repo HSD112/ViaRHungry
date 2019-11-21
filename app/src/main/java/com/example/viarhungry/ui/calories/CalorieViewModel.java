@@ -1,26 +1,18 @@
 package com.example.viarhungry.ui.calories;
 
-import android.view.ViewParent;
-import android.widget.TextView;
-
 import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProviders;
-
-import com.example.viarhungry.MainActivity;
-import com.example.viarhungry.R;
 
 import java.util.ArrayList;
 
 
 public class CalorieViewModel extends ViewModel {
 
-    private ArrayList<food> foods;
-
+    private CalorieRepository repository;
     private String calorie_total;
 
 
     public CalorieViewModel() {
-        foods= new ArrayList<>();
+        repository = CalorieRepository.getInstance();
         calorie_total="0";
 
     }
@@ -28,29 +20,29 @@ public class CalorieViewModel extends ViewModel {
 
 
     public void addFood(String name,String cal){
-        foods.add(new food(name,cal));
+        repository.add(new Food(name,cal));
     }
 
-    public void addFood(food Food){     //has redundant protection since it cannot receive empty string
+    public void addFood(Food Food){     //has redundant protection since it cannot receive empty string
         if(Food.getCalories().equals(""))
             Food.setCalories("0");
-        foods.add(Food);
+        repository.add(Food);
     }
 
     public void removeLastFood(){
-        foods.remove(foods.size()-1);
+        repository.remove();
     }
 
-    public food getFood(int index){
-        return foods.get(index);
+    public Food getFood(int index){
+        return repository.get(index);
     }
 
     public String updateCalorieTotal(){
         int tmpC=0;
 
-        if(foods.size()!=0) {
-            for (int i = 0; i < foods.size(); i++)
-                tmpC += Integer.parseInt(foods.get(i).getCalories());
+        if(repository.size()!=0) {
+            for (int i = 0; i < repository.size(); i++)
+                tmpC += Integer.parseInt(repository.get(i).getCalories());
         }
 
         calorie_total=""+tmpC;
@@ -58,12 +50,12 @@ public class CalorieViewModel extends ViewModel {
         return calorie_total;
     }
 
-    public ArrayList<food> getFoods(){
-        return foods;
+    public ArrayList<Food> getFoods(){
+        return repository.getAllFood();
     }
 
-    public void  setFoods(ArrayList<food> foods){
-        this.foods=foods;
+    public void  setFoods(ArrayList<Food> foods){
+        repository.set(foods);
     }
 
 }

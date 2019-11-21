@@ -9,9 +9,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.example.viarhungry.ui.calories.CalorieFragment;
-import com.example.viarhungry.ui.calories.food;
-import com.example.viarhungry.ui.water.WaterFragment;
+import com.example.viarhungry.ui.calories.Food;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
@@ -19,14 +17,13 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private String cupsDrunk;
-    private int bar;
-    private ArrayList<food> foods;
+    private ArrayList<Food> foods;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        cupsDrunk = "0";
-        foods = new ArrayList<>();
+        cupsDrunk = "0"; // this can be saved with shared preference because it's a simple String
+        foods = new ArrayList<>(); // need DAO for this
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -70,25 +67,10 @@ public class MainActivity extends AppCompatActivity {
         cupsDrunk = text;
     }
 
-    public int getBar() {
-        return bar;
-    }
-
-    public void setBar(int value) {
-        bar = value;
-    }
-
-    public void setFoods(ArrayList<food> foods){
+    public void setFoods(ArrayList<Food> foods){
         this.foods=foods;
     }
-    public ArrayList<food> getFoods(){
+    public ArrayList<Food> getFoods(){
         return foods;
-    }
-    public void saveLocalData(){
-
-
-    }
-    public void loadLocalData(){
-
     }
 }

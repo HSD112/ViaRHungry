@@ -1,10 +1,10 @@
 package com.example.viarhungry.ui.calories;
 
-public class food {
+public class Food {
     private String name;
     private String calories;
 
-    food(String name, String cal) {
+    Food(String name, String cal) {
         this.name = name;
         calories = cal;
     }

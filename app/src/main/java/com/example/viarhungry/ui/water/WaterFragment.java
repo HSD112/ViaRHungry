@@ -58,13 +58,12 @@ public class WaterFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onPause() {
         mainActivity.setCupsDrunk(cupsDrunk.getText().toString());
-        mainActivity.setBar(bar.getProgress());
         super.onPause();
     }
 
     public void onResume() {
         cupsDrunk.setText(mainActivity.getCupsDrunk());
-        bar.setProgress(mainActivity.getBar());
+        bar.setProgress(Integer.parseInt(cupsDrunk.getText().toString()));
         super.onResume();
     }
 
