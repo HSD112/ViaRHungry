@@ -2,7 +2,6 @@ package com.example.viarhungry.ui.calories;
 
 import android.app.Application;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ public class CalorieRepository {
 
 
     private CalorieRepository(Application app){
-        foodDatabase database = foodDatabase.getInstance(app);
+        FoodDatabase database = FoodDatabase.getInstance(app);
         foodDao = database.foodDao();
         foods = FoodList.getInstance();
 
@@ -48,9 +47,30 @@ public class CalorieRepository {
         return foods.getAllFood();
     }
 
-    public void add(Food food){
-        foods.insert(food);
-        new InsertFoodAsync(foodDao).execute(food);
+    public String updateCalorieTotal(){
+        int tmpC=0;
+
+        if(size()!=0) {
+            for (int i = 0; i < size(); i++)
+                tmpC += Integer.parseInt(get(i).getCalories());
+        }
+        return ""+tmpC;
+    }
+
+
+    public boolean add(String name,String cal){
+        if(name.equals("")) name = "Food";
+
+
+        if(!cal.equals("")) {
+
+            Food newFood = new Food(name, cal);
+            foods.insert(newFood);
+            new InsertFoodAsync(foodDao).execute(newFood);
+            //no need to use refresh here since it should be the same
+            return true;
+        }
+        return false;
     }
 
     public void deleteAllFoods(){
@@ -58,19 +78,26 @@ public class CalorieRepository {
     }
 
     public void remove(){
-        foods.removeTop();
+        new DeleteFoodAsync(foodDao).execute(foods.get(foods.size()-1)); //deletes from db
+        foods.removeTop(); // deletes from memory
     }
 
     public Food get(int index){
-
+        refresh();
         return foods.get(index);
     }
 
     public int size() {
+        refresh();
+        if(foods!= null)
+            return foods.size();
+
+        foods = FoodList.getInstance();
         return foods.size();
     }
 
     public void set(ArrayList<Food> foods) {
+        refresh();
         this.foods.set(foods);
     }
 
@@ -83,8 +110,6 @@ public class CalorieRepository {
 
         @Override
         protected Void doInBackground(Food... foods) {
-
-            Log.e("DATABASE","To insert:"+foods[0].getName()+" at Date:" + foods[0].getDate());
             foodDao.insert(foods[0]);
 
             return null;
@@ -120,7 +145,21 @@ public class CalorieRepository {
         @Override
         protected Void doInBackground(Food... foods) {
 
-            foodListInstance.set((ArrayList<Food>) foodDao.getTodayFood(date));
+            foodListInstance.set((ArrayList<Food>) foodDao.getAllFoodsFromDb(date));
+            return null;
+        }
+    }
+
+    private static class DeleteFoodAsync extends AsyncTask<Food,Void,Void> {
+        private FoodDao foodDao;
+
+        private DeleteFoodAsync(FoodDao foodDao){
+            this.foodDao = foodDao;
+        }
+
+        @Override
+        protected Void doInBackground(Food... foods) {
+            foodDao.delete(foods[0]);
             return null;
         }
     }

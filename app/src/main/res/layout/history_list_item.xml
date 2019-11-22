@@ -1,0 +1,27 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+android:layout_width="match_parent"
+android:layout_height="wrap_content">
+
+<TextView
+    android:layout_weight="3"
+    android:id="@+id/date"
+    android:layout_height="wrap_content"
+    android:text="@string/date"
+    android:layout_width="100dp" />
+
+<TextView
+    android:layout_weight="2"
+    android:id="@+id/historyTotalCalories"
+    android:layout_width="100dp"
+    android:layout_height="wrap_content"
+    android:text="@string/_0" />
+
+<TextView
+    android:layout_weight="1"
+    android:id="@+id/historyCupsOfWater"
+    android:layout_width="100dp"
+    android:layout_height="wrap_content"
+    android:text="@string/_0" />
+
+</LinearLayout>

@@ -25,10 +25,13 @@ public interface FoodDao {
     @Query("DELETE FROM food_table")
     void deleteAllNotes();
 
-    @Query("SELECT * FROM food_table ORDER BY id DESC")
+    @Query("SELECT * FROM food_table ORDER BY id ASC")
     List<Food> list();
 
     @Query("SELECT * FROM food_table WHERE date == :date")
-    List<Food> getTodayFood(String date);
+    List<Food> getAllFoodsFromDb(String date);
+
+    @Query("SELECT * FROM food_table WHERE id == :id")
+    List<Food> deleteFood(int id);
 
 }

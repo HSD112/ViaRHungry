@@ -37,7 +37,6 @@ public class FoodList {
     }
 
     Food get(int index){
-
        return allFood.get(index);
     }
 

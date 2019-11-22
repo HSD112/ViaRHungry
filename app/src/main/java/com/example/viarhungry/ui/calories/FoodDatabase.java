@@ -7,15 +7,15 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
 @Database(entities = {Food.class}, version = 1)
-public abstract class foodDatabase extends RoomDatabase {
+public abstract class FoodDatabase extends RoomDatabase {
 
-    private static foodDatabase instance;
+    private static FoodDatabase instance;
     public abstract FoodDao foodDao();
 
-    public static synchronized foodDatabase getInstance(Context context){
+    public static synchronized FoodDatabase getInstance(Context context){
         if(instance == null) {
             instance = Room.databaseBuilder(context.getApplicationContext(),
-                    foodDatabase.class, "food_database")
+                    FoodDatabase.class, "food_database")
                     .fallbackToDestructiveMigration()
                     .build();
         }

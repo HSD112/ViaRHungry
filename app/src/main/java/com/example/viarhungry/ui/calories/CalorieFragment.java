@@ -22,26 +22,27 @@ import java.util.ArrayList;
 
 public class CalorieFragment extends Fragment implements View.OnClickListener {
 
-    private RecyclerView foodList;
     private RecyclerView.Adapter foodAdapter;
-    private MainActivity mainActivity;
     private EditText foodName;
     private EditText calories;
     private TextView calorie_total;
+    private MainActivity mainActivity;
 
 
 
 
 
-    private CalorieViewModel dashboardViewModel;
+    private CalorieViewModel CalorieViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        dashboardViewModel =
+        CalorieViewModel =
                 ViewModelProviders.of(this).get(CalorieViewModel.class);
 
         View root = inflater.inflate(R.layout.fragment_calories, container, false);
+
         mainActivity = (MainActivity) getActivity();
+
         return root;
 
     }
@@ -49,12 +50,12 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
 
-        foodList = view.findViewById(R.id.rv);
-        foodList.hasFixedSize();
-        foodList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        RecyclerView recyclerView = view.findViewById(R.id.rv);
+        recyclerView.hasFixedSize();
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         foodAdapter = new myAdaptor(new ArrayList<Food>());
-        foodList.setAdapter(foodAdapter);
+        recyclerView.setAdapter(foodAdapter);
 
         Button addDrinkButton = (Button) view.findViewById(R.id.addFood);
         addDrinkButton.setOnClickListener(this);
@@ -66,16 +67,22 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
         calories = (EditText) view.findViewById(R.id.caloriesNumber);
         calorie_total = (TextView) view.findViewById(R.id.totalCalories);
 
-
     }
 
     public void onResume() {
         super.onResume();
-
-        updateCalorieTotal();
+        calorie_total.setText(mainActivity.getCalories());
 
         foodAdapter.notifyDataSetChanged();
-        foodAdapter.notifyItemInserted(dashboardViewModel.getFoods().size()-1);
+        foodAdapter.notifyItemInserted(CalorieViewModel.getFoods().size()-1);
+    }
+
+    public void onPause(){
+        super.onPause();
+
+        updateCalorieTotal();
+        mainActivity.setCalories(calorie_total.getText().toString());
+
     }
 
 
@@ -100,23 +107,18 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
     private void removeFood() {
         removeLastFood();
         updateCalorieTotal();
+        mainActivity.setFoods(CalorieViewModel.getFoods());
     }
 
     private void addFood() {
         String tempFName=foodName.getText().toString();
         String tempCalories=calories.getText().toString();
 
-        if(tempFName.equals("")) tempFName = "Food";
-
-
-        if(!tempCalories.equals("")) {
-
-            Food newFood = new Food(tempFName, tempCalories);
-
-            addFood(newFood);
-            updateCalorieTotal();
-        }
-        else foodToast();
+        if(!CalorieViewModel.addFood(tempFName,tempCalories))
+            foodToast();
+        foodAdapter.notifyItemInserted(CalorieViewModel.getFoodSize()-1);
+        updateCalorieTotal();
+        mainActivity.setFoods(CalorieViewModel.getFoods());
     }
 
     private void foodToast() {
@@ -129,14 +131,18 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
     }
 
     public void updateCalorieTotal(){
-        calorie_total.setText(dashboardViewModel.updateCalorieTotal());
+        calorie_total.setText(CalorieViewModel.updateCalorieTotal());
+    }
+
+    public String getCalorieTotal(){
+        return CalorieViewModel.updateCalorieTotal();
     }
 
 
     private class myAdaptor extends RecyclerView.Adapter {
 
         public myAdaptor(ArrayList<Food> newFoods){
-            dashboardViewModel.setFoods(newFoods);
+            CalorieViewModel.setFoods(newFoods);
         }
 
         @NonNull
@@ -145,20 +151,20 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
 
             LayoutInflater inflater = LayoutInflater.from(parent.getContext());
 
-            View view = inflater.inflate(R.layout.rec_layout,parent,false); //rec_layout stands for recycler layout
+            View view = inflater.inflate(R.layout.food_list_item,parent,false); //foodListItem stands for recycler layout
 
             return new ViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-            ViewHolder.foodName.setText(dashboardViewModel.getFood(position).getName());
-            ViewHolder.calorieCount.setText(dashboardViewModel.getFood(position).getCalories());
+            ViewHolder.foodName.setText(CalorieViewModel.getFood(position).getName());
+            ViewHolder.calorieCount.setText(CalorieViewModel.getFood(position).getCalories());
         }
 
         @Override
         public int getItemCount() {
-            return dashboardViewModel.getFoods().size();
+            return CalorieViewModel.getFoods().size();
         }
 
 
@@ -179,17 +185,11 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-
-    public void addFood(Food Food){
-        dashboardViewModel.addFood(Food);
-        foodAdapter.notifyItemInserted(dashboardViewModel.getFoods().size()-1);
-    }
-
     public void removeLastFood(){
-        if(dashboardViewModel.getFoods().size()>0) {
-            dashboardViewModel.removeLastFood();
-            foodAdapter.notifyItemRemoved(dashboardViewModel.getFoods().size());
-            foodAdapter.notifyItemRangeChanged(dashboardViewModel.getFoods().size(),dashboardViewModel.getFoods().size());
+        if(CalorieViewModel.getFoods().size()>0) {
+            CalorieViewModel.removeLastFood();
+            foodAdapter.notifyItemRemoved(CalorieViewModel.getFoods().size());
+            foodAdapter.notifyItemRangeChanged(CalorieViewModel.getFoods().size(), CalorieViewModel.getFoods().size());
 
         }
 

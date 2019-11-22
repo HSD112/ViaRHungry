@@ -1,14 +1,19 @@
 package com.example.viarhungry;
 
+import android.app.Application;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.viarhungry.ui.calories.CalorieFragment;
+import com.example.viarhungry.ui.calories.CalorieRepository;
+import com.example.viarhungry.ui.calories.CalorieViewModel;
 import com.example.viarhungry.ui.calories.Food;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -18,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String cupsDrunk;
     private ArrayList<Food> foods;
+    private String calories;
 
 
     @Override
@@ -38,6 +44,14 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
+        setFoods(CalorieRepository.getInstance(this.getApplication()).getAllFood());
+
+        CalorieRepository.getInstance(this.getApplication()).refresh();
+
+        calories = CalorieRepository.getInstance(this.getApplication()).updateCalorieTotal();
+
+
+
 
     }
 
@@ -55,6 +69,9 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         SharedPreferences prefs = getSharedPreferences("DailyData", MODE_PRIVATE);
         cupsDrunk= prefs.getString("cupsDrunk", "0");
+
+        CalorieRepository.getInstance(this.getApplication()).refresh(); //should have used Live data, this updates the calories fragment.
+
     }
 
 
@@ -72,5 +89,13 @@ public class MainActivity extends AppCompatActivity {
     }
     public ArrayList<Food> getFoods(){
         return foods;
+    }
+
+    public String getCalories() {
+        return calories;
+    }
+
+    public void setCalories(String calories) {
+        this.calories = calories;
     }
 }
