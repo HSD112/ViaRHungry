@@ -4,8 +4,10 @@ import android.app.Application;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
+import java.util.Locale;
 
 public class CalorieRepository {
 
@@ -14,6 +16,7 @@ public class CalorieRepository {
     private static CalorieRepository instance;
 
     private FoodDao foodDao;
+
 
     private CalorieRepository(Application app){
         foodDatabase database = foodDatabase.getInstance(app);
@@ -28,12 +31,20 @@ public class CalorieRepository {
         }
         return instance;
     }
+    public void refresh(){
+        new GetTodayFoodAsync(foodDao).execute();
+    }
+
 
     public ArrayList<Food> getAllFood(){
-        ArrayList<Food> newList = new ArrayList<>();
-                new GetFoodAsync(null,foodDao,newList);
-        if(newList != null)
-             Log.e("DATABASE READ",newList.get(0).getName());
+
+        refresh();
+        return foods.getAllFood();
+    }
+
+    public ArrayList<Food> getFoodForAllDays(){
+
+        new GetFoodAsync(foodDao).execute();
         return foods.getAllFood();
     }
 
@@ -80,19 +91,39 @@ public class CalorieRepository {
         }
     }
 
-    private static class GetFoodAsync extends AsyncTask<Food, Void, List<Food>> {
+    private static class GetFoodAsync extends AsyncTask<Void, Void, Void> {
         private FoodDao foodDao;
-
-        private GetFoodAsync(FoodDao dao, FoodDao foodDao, ArrayList<Food> newList){
+        private FoodList foodListInstance;
+        private GetFoodAsync(FoodDao foodDao){
             this.foodDao = foodDao;
+            foodListInstance = FoodList.getInstance();
         }
 
         @Override
-        protected ArrayList<Food> doInBackground(Food... foods) {
-
-            if(foodDao.list() != null)
-                return (ArrayList<Food>) foodDao.list();
-            else return new ArrayList<>();
+        protected Void doInBackground(Void... voids) {
+            foodListInstance.set((ArrayList<Food>) foodDao.list());
+            return null;
         }
     }
+
+    private static class GetTodayFoodAsync extends AsyncTask<Food,Void,Void> {
+        private FoodDao foodDao;
+        private String date;
+        private FoodList foodListInstance;
+
+        private GetTodayFoodAsync(FoodDao foodDao){
+            this.foodDao = foodDao;
+            date = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(new Date());
+            foodListInstance = FoodList.getInstance();
+        }
+
+        @Override
+        protected Void doInBackground(Food... foods) {
+
+            foodListInstance.set((ArrayList<Food>) foodDao.getTodayFood(date));
+            return null;
+        }
+    }
+
+
 }

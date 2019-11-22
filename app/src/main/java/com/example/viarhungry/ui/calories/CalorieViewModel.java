@@ -41,6 +41,8 @@ public class CalorieViewModel extends AndroidViewModel {
     }
 
     public String updateCalorieTotal(){
+        repository.refresh();
+
         int tmpC=0;
 
         if(repository.size()!=0) {

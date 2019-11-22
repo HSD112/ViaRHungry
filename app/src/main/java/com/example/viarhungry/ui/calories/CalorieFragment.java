@@ -69,16 +69,13 @@ public class CalorieFragment extends Fragment implements View.OnClickListener {
 
     }
 
-    public void onPause() {
-        mainActivity.setFoods(dashboardViewModel.getFoods());
-        updateCalorieTotal();
-        super.onPause();
-    }
-
     public void onResume() {
-        dashboardViewModel.setFoods(mainActivity.getFoods());
-        updateCalorieTotal();
         super.onResume();
+
+        updateCalorieTotal();
+
+        foodAdapter.notifyDataSetChanged();
+        foodAdapter.notifyItemInserted(dashboardViewModel.getFoods().size()-1);
     }
 
 
