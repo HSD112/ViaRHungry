@@ -15,16 +15,27 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.viarhungry.MainActivity;
 import com.example.viarhungry.R;
+import com.example.viarhungry.retrofit.NetworkClient;
+import com.example.viarhungry.retrofit.WResponse;
+import com.example.viarhungry.retrofit.WeatherAPIs;
 
 import java.util.ArrayList;
 
-public class HistoryFragment extends Fragment {
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import com.google.gson.*;
+
+public class HistoryFragment extends Fragment implements View.OnClickListener {
 
     private HistoryViewModel historyViewModel;
 
     private RecyclerView recyclerView;
     private RecyclerView.Adapter trackedDayAdapter;
     private MainActivity mainActivity;
+
+    private TextView responseText;
 
 
 
@@ -52,6 +63,67 @@ public class HistoryFragment extends Fragment {
 
         trackedDayAdapter.notifyItemInserted(historyViewModel.getSize()-1);
 
+        responseText = view.findViewById(R.id.weatherText);
+        responseText.setOnClickListener(this);
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+
+            case R.id.weatherText: {
+                fetchWeatherDetails(); // in my case ill only get wind speed and wind direction in degrees
+                Log.e("Debug","Tapped");
+                break;
+            }
+        }
+
+    }
+
+
+    //doesn't work. It fails at making, or receiving the call ...
+            //Wait does my virtual phone even have internet ??
+                //Yes it does. Ill try debugging after I implement all the mandatory stuff.
+
+    private void fetchWeatherDetails() {
+        //Obtain an instance of Retrofit by calling the static method.
+        Retrofit retrofit = NetworkClient.getRetrofitClient();
+        /*
+        The main purpose of Retrofit is to create HTTP calls from the Java interface based on the annotation associated with each method. This is achieved by just passing the interface class as parameter to the create method
+        */
+        WeatherAPIs weatherAPIs = retrofit.create(WeatherAPIs.class);
+        /*
+        Invoke the method corresponding to the HTTP request which will return a Call object. This Call object will used to send the actual network request with the specified parameters
+        */
+        Call call = weatherAPIs.getWeatherByCity("London", "fdca55d0157703ce04764968d5435ee9");
+        /*
+        This is the line which actually sends a network request. Calling enqueue() executes a call asynchronously. It has two callback listeners which will invoked on the main thread
+        */
+        call.enqueue(new Callback() {
+            @Override
+            public void onResponse(Call call, Response response) {
+                Log.e("Response","Success");
+                /*This is the success callback. Though the response type is JSON, with Retrofit we get the response in the form of WResponse POJO class
+                 */
+                if (response.body() != null) {
+                    WResponse wResponse = (WResponse) response.body();
+
+                    String responseString = "Wind speed: " +wResponse.getMain().getSpeed()+
+                            " Wind direction: " +wResponse.getMain().getDeg() + " degrees"; //android told me not to create the string directly in the set text :l
+
+                    responseText.setText(responseString);
+                }
+            }
+
+            @Override
+            public void onFailure(Call call, Throwable t) {
+
+                Log.e("Response","Failure");
+                /*
+                Error callback */
+            }
+        });
     }
 
     private class myAdaptor extends RecyclerView.Adapter {
