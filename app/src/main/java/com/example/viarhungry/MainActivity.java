@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private String calories;
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         cupsDrunk = "0"; // this can be saved with shared preference because it's a simple String
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+
 
     @Override
     protected void onPause() {

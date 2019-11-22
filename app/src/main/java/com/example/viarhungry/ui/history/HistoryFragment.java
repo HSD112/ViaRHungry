@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,6 +26,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
+
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.*;
 
 public class HistoryFragment extends Fragment implements View.OnClickListener {
@@ -36,6 +44,9 @@ public class HistoryFragment extends Fragment implements View.OnClickListener {
     private MainActivity mainActivity;
 
     private TextView responseText;
+
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference myRef = database.getReference();
 
 
 
@@ -59,13 +70,43 @@ public class HistoryFragment extends Fragment implements View.OnClickListener {
         trackedDayAdapter = new HistoryFragment.myAdaptor(new ArrayList<TrackedDay>());
         recyclerView.setAdapter(trackedDayAdapter);
 
-        historyViewModel.addToday(mainActivity.getFoods(),mainActivity.getCupsDrunk());
+        historyViewModel.addToday(mainActivity.getFoods(), mainActivity.getCupsDrunk());
 
-        trackedDayAdapter.notifyItemInserted(historyViewModel.getSize()-1);
+        trackedDayAdapter.notifyItemInserted(historyViewModel.getSize() - 1);
 
         responseText = view.findViewById(R.id.weatherText);
         responseText.setOnClickListener(this);
 
+        myRef.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                String tempString = (String) dataSnapshot.getValue();
+
+                Log.d("DEBUG", tempString);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+
+
+        });
     }
 
     @Override
@@ -73,6 +114,9 @@ public class HistoryFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()) {
 
             case R.id.weatherText: {
+
+                saveData(); // just to have a repeatable test
+
                 fetchWeatherDetails(); // in my case ill only get wind speed and wind direction in degrees
                 Log.e("Debug","Tapped");
                 break;
@@ -113,6 +157,8 @@ public class HistoryFragment extends Fragment implements View.OnClickListener {
                             " Wind direction: " +wResponse.getMain().getDeg() + " degrees"; //android told me not to create the string directly in the set text :l
 
                     responseText.setText(responseString);
+
+                    saveData();
                 }
             }
 
@@ -160,6 +206,12 @@ public class HistoryFragment extends Fragment implements View.OnClickListener {
 
 
     }
+
+    private void saveData() { //save weather data whenever it is updated
+        myRef.push().setValue(responseText.getText().toString());
+
+    }
+
 
     static class ViewHolder extends RecyclerView.ViewHolder{
 
